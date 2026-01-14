@@ -34,20 +34,24 @@ const features = [
 
 const Features: React.FC = () => {
   return (
-    <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+    <ul className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 list-none">
       {features.map((f, i) => (
-        <div key={i} className={`reveal ${f.delay} glass-card p-10 rounded-[2.5rem] flex flex-col group`}>
-          <div className="text-4xl mb-6 group-hover:scale-125 transition-transform duration-300">
-            {f.icon}
-          </div>
-          <p className="text-blue-400 text-[10px] font-black uppercase tracking-[0.2em] mb-2">{f.subtitle}</p>
-          <h3 className="text-2xl font-bold text-white mb-4 italic">{f.title}</h3>
-          <p className="text-slate-400 font-light leading-relaxed">
-            {f.description}
-          </p>
-        </div>
+        <li key={i} className={`reveal ${f.delay} glass-card p-10 rounded-[2.5rem] flex flex-col group`}>
+          <article>
+            <div className="text-4xl mb-6 group-hover:scale-125 transition-all duration-300 blue-emoji" aria-hidden="true">
+              {f.icon}
+            </div>
+            <header>
+              <p className="text-blue-400 text-[10px] font-black uppercase tracking-[0.2em] mb-2">{f.subtitle}</p>
+              <h3 className="text-2xl font-bold text-white mb-4 italic">{f.title}</h3>
+            </header>
+            <p className="text-slate-400 font-light leading-relaxed">
+              {f.description}
+            </p>
+          </article>
+        </li>
       ))}
-    </div>
+    </ul>
   );
 };
 

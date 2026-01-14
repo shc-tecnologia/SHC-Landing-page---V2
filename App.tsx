@@ -42,7 +42,7 @@ const App: React.FC = () => {
 
         <section id="recursos" className="py-24">
           <div className="max-w-7xl mx-auto px-6 mb-16">
-            <h2 className="text-3xl md:text-5xl font-extrabold text-white mb-4 italic">Organize o Caos.</h2>
+            <h2 className="text-3xl md:text-5xl font-extrabold text-white mb-4 italic">Organize sua empresa</h2>
             <p className="text-slate-400 max-w-2xl text-lg">
               Deixe as planilhas para trás. O SHC BOX centraliza tudo o que você precisa para crescer sua frota com segurança.
             </p>

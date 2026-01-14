@@ -8,6 +8,11 @@ interface HeroProps {
 const Hero: React.FC<HeroProps> = ({ onSignUp }) => {
   const [activeBtn, setActiveBtn] = useState<string | null>(null);
 
+  // Utilizamos o caminho direto do arquivo na raiz. 
+  // Em ambientes Vite/React, arquivos na raiz do projeto ou na pasta public 
+  // são servidos diretamente pelo caminho '/delivery_img.png'
+  const deliveryImgPath = '/delivery_img.png';
+
   const handleAction = (type: 'signup' | 'product') => {
     setActiveBtn(type);
     
@@ -17,7 +22,10 @@ const Hero: React.FC<HeroProps> = ({ onSignUp }) => {
       if (type === 'signup') {
         onSignUp();
       } else {
-        document.getElementById('produto')?.scrollIntoView({ behavior: 'smooth' });
+        const element = document.getElementById('produto');
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
       }
     }, 150);
   };
@@ -31,13 +39,16 @@ const Hero: React.FC<HeroProps> = ({ onSignUp }) => {
             <span>SHC BOX - Software de gestão</span>
           </div>
           
-          <h1 className="reveal delay-100 font-modern text-6xl md:text-8xl font-black text-white mb-8 leading-[0.9] tracking-tighter">
-            SUA EMPRESA <br/> 
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300 italic">DENTRO DA BOX.</span>
+          <h1 className="reveal delay-100 font-modern text-6xl md:text-8xl font-black text-white mb-8 leading-tight tracking-tighter">
+            SUAS ENTREGAS <br/> 
+            <span className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300 pr-6 py-2 -mr-6">
+              DENTRO DA <span className="italic">BOX.</span>
+            </span>
           </h1>
           
           <p className="reveal delay-200 max-w-xl mx-auto lg:mx-0 text-slate-400 text-lg md:text-xl font-light leading-relaxed mb-12">
-            O <strong className="text-white font-bold">SHC BOX</strong> é o sistema definitivo para quem quer parar de apagar incêndios e começar a gerir uma transportadora de verdade. Controle rotas, entregas e lucro em um só lugar.
+            O <strong className="text-white font-bold">SHC BOX</strong> é o sistema definitivo para centralizar a gestão da sua transportadora.
+Controle rotas, entregas, lucro e os principais apps que você já usa de marketplace — como <strong className="text-white font-bold">Mercado Livre, Shopee, Amazon e afins</strong> — tudo em um só lugar.
           </p>
           
           <div className="reveal delay-300 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-6">
@@ -62,18 +73,24 @@ const Hero: React.FC<HeroProps> = ({ onSignUp }) => {
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-transparent pointer-events-none"></div>
                 <div className="bg-slate-900 rounded-[3rem] overflow-hidden border border-white/5 relative aspect-video lg:aspect-square">
                   <img 
-                    src="https://images.unsplash.com/photo-1519003722824-194d4455a60c?auto=format&fit=crop&q=60&w=800&fm=webp" 
-                    alt="Caminhão de Logística SHC BOX" 
-                    className="w-full h-full object-cover opacity-60 grayscale group-hover:grayscale-0 transition-all duration-700"
+                    src={deliveryImgPath} 
+                    alt="Operação logística SHC BOX" 
+                    className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-all duration-700"
                     fetchPriority="high"
                     decoding="async"
                     loading="eager"
+                    onError={(e) => {
+                      // Fallback visual caso a imagem física não seja encontrada
+                      const target = e.target as HTMLImageElement;
+                      target.src = "https://images.pexels.com/photos/7362883/pexels-photo-7362883.jpeg";
+                      target.style.opacity = "0.4";
+                    }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#020617] via-transparent to-transparent"></div>
                   
                   <div className="absolute top-8 left-8 flex items-center space-x-2 glass-deep px-4 py-2 rounded-xl border-blue-500/30">
                     <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-                    <span className="text-[10px] font-black uppercase text-white">Status da Frota: Online</span>
+                    <span className="text-[10px] font-black uppercase text-white">Conheça o sistema</span>
                   </div>
                 </div>
              </div>
