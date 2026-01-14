@@ -6,7 +6,7 @@ const ContactSection: React.FC = () => {
     <section id="contato" className="py-24 px-6 relative overflow-hidden">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-          <div>
+          <div className="reveal-left">
             <div className="inline-block px-4 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold uppercase tracking-widest mb-6">
               Fale com um Especialista
             </div>
@@ -41,7 +41,7 @@ const ContactSection: React.FC = () => {
             </div>
           </div>
 
-          <div className="relative">
+          <div className="relative reveal-right delay-200">
             <div className="glass-deep p-1 rounded-[3rem] border border-white/10 shadow-2xl">
               <div className="bg-slate-900/50 rounded-[2.8rem] p-10">
                 <h4 className="text-2xl font-bold text-white mb-6 italic">Agende uma demonstração</h4>

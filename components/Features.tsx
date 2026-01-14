@@ -6,25 +6,29 @@ const features = [
     title: "BOX Financeiro",
     subtitle: "Controle seu Dinheiro",
     description: "Saiba exatamente quanto custa cada entrega. Faturamento automático e controle de repasse para motoristas sem erro.",
-    icon: "💰"
+    icon: "💰",
+    delay: "delay-100"
   },
   {
     title: "BOX Rotas",
     subtitle: "Menos Combustível",
     description: "Nosso sistema calcula o melhor caminho. Suas vans rodam menos quilômetros e entregam mais pacotes por dia.",
-    icon: "🗺️"
+    icon: "🗺️",
+    delay: "delay-200"
   },
   {
     title: "BOX Frota",
     subtitle: "Veículos Saudáveis",
     description: "Aviso de manutenção, controle de pneus e documentos. Não deixe seu caminhão parado por falta de cuidado.",
-    icon: "🚛"
+    icon: "🚛",
+    delay: "delay-300"
   },
   {
     title: "BOX Motorista",
     subtitle: "App de Campo",
     description: "Aplicativo simples para o motorista dar baixa. Foto da entrega e GPS em tempo real na palma da mão.",
-    icon: "📱"
+    icon: "📱",
+    delay: "delay-400"
   }
 ];
 
@@ -32,7 +36,7 @@ const Features: React.FC = () => {
   return (
     <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
       {features.map((f, i) => (
-        <div key={i} className="glass-card p-10 rounded-[2.5rem] flex flex-col group">
+        <div key={i} className={`reveal ${f.delay} glass-card p-10 rounded-[2.5rem] flex flex-col group`}>
           <div className="text-4xl mb-6 group-hover:scale-125 transition-transform duration-300">
             {f.icon}
           </div>

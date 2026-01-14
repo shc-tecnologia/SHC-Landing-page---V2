@@ -9,8 +9,8 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ onSignUp, onLogin }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [scrollY, setScrollY] = useState(0);
+  const [activeBtn, setActiveBtn] = useState<string | null>(null);
 
-  // Monitora o scroll para o efeito parallax e estilo do header
   useEffect(() => {
     const handleScroll = () => {
       setScrollY(window.scrollY);
@@ -19,7 +19,6 @@ const Header: React.FC<HeaderProps> = ({ onSignUp, onLogin }) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Fecha o menu ao redimensionar para desktop
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth >= 1024) {
@@ -30,17 +29,10 @@ const Header: React.FC<HeaderProps> = ({ onSignUp, onLogin }) => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  /**
-   * Função de Easing: EaseInOutQuart
-   * Proporciona uma aceleração e desaceleração extremamente suave e profissional.
-   */
   const easeInOutQuart = (t: number): number => {
     return t < 0.5 ? 8 * t * t * t * t : 1 - Math.pow(-2 * t + 2, 4) / 2;
   };
 
-  /**
-   * Animação de Scroll customizada em 60FPS
-   */
   const animateScroll = (targetY: number, duration: number = 1000) => {
     const startY = window.pageYOffset;
     const difference = targetY - startY;
@@ -67,18 +59,19 @@ const Header: React.FC<HeaderProps> = ({ onSignUp, onLogin }) => {
     
     const element = document.getElementById(id.replace('#', ''));
     if (element) {
-      const headerOffset = 100; // Compensação para o header fixo
+      const headerOffset = 100;
       const elementPosition = element.getBoundingClientRect().top;
       const targetY = elementPosition + window.pageYOffset - headerOffset;
-
-      // Dispara a animação customizada em vez do scroll nativo
       animateScroll(targetY, 1200);
     }
   };
 
-  const handleMobileAction = (action: () => void) => {
-    action();
-    setIsMobileMenuOpen(false);
+  const handleActionClick = (action: () => void, btnId: string) => {
+    setActiveBtn(btnId);
+    setTimeout(() => {
+      setActiveBtn(null);
+      action();
+    }, 150);
   };
 
   const navLinks = [
@@ -87,7 +80,6 @@ const Header: React.FC<HeaderProps> = ({ onSignUp, onLogin }) => {
     { label: 'Contato', href: '#contato' },
   ];
 
-  // Cálculos de Parallax sutil para a logo e header
   const textOffset = Math.min(scrollY * 0.08, 6);
   const headerScale = Math.max(1 - scrollY * 0.0002, 0.98);
 
@@ -100,12 +92,11 @@ const Header: React.FC<HeaderProps> = ({ onSignUp, onLogin }) => {
           paddingTop: scrollY > 50 ? '1rem' : '1.5rem'
         }}
       >
-        <nav className={`glass-deep w-full max-w-7xl px-6 md:px-12 py-4 rounded-[2rem] flex items-center justify-between shadow-2xl relative transition-all duration-500 ${scrollY > 50 ? 'border-blue-500/30' : 'border-white/10'}`}>
-          {/* Logo Title: SHC dentro de um Box Branco Proporcional com ® */}
+        <nav className={`glass-deep w-full max-w-7xl px-6 md:px-12 py-4 rounded-[2rem] flex items-center justify-between shadow-2xl relative transition-all duration-500 ${scrollY > 50 ? 'border-blue-500/30 shadow-blue-500/10' : 'border-white/10'}`}>
           <div 
             className="flex items-center cursor-pointer group" 
             onClick={(e) => {
-              animateScroll(0, 1000); // Volta ao topo com animação suave
+              animateScroll(0, 1000);
               setIsMobileMenuOpen(false);
             }}
           >
@@ -120,7 +111,6 @@ const Header: React.FC<HeaderProps> = ({ onSignUp, onLogin }) => {
             </div>
           </div>
 
-          {/* Nav Desktop */}
           <div className="hidden lg:flex items-center space-x-12 text-xs font-bold uppercase tracking-[0.2em] text-slate-400">
             {navLinks.map((link) => (
               <a 
@@ -135,24 +125,22 @@ const Header: React.FC<HeaderProps> = ({ onSignUp, onLogin }) => {
             ))}
           </div>
 
-          {/* Botões Desktop & Hamburger Mobile */}
           <div className="flex items-center space-x-4">
             <div className="hidden lg:flex items-center space-x-4">
               <button 
-                onClick={onLogin}
-                className="text-xs font-black text-slate-500 hover:text-white transition-colors uppercase tracking-widest"
+                onClick={() => handleActionClick(onLogin, 'login')}
+                className={`text-xs font-black text-slate-500 hover:text-white transition-all uppercase tracking-widest relative group ${activeBtn === 'login' ? 'animate-click text-white' : ''}`}
               >
                 Acesso Gestor
               </button>
               <button 
-                onClick={onSignUp}
-                className="btn-animate text-white px-8 py-3 rounded-full text-xs font-black uppercase tracking-widest transition-all shadow-xl shadow-blue-900/40 active:scale-95 border border-white/10"
+                onClick={() => handleActionClick(onSignUp, 'signup')}
+                className={`btn-animate text-white px-8 py-3 rounded-full text-xs font-black uppercase tracking-widest transition-all shadow-xl shadow-blue-900/40 active:scale-95 border border-white/10 shimmer-effect ${activeBtn === 'signup' ? 'animate-click' : ''}`}
               >
                 Lista de Espera
               </button>
             </div>
 
-            {/* Menu Mobile Button (Hamburger) */}
             <button 
               className="lg:hidden p-2 text-white transition-transform active:scale-90"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -171,7 +159,6 @@ const Header: React.FC<HeaderProps> = ({ onSignUp, onLogin }) => {
           </div>
         </nav>
 
-        {/* Overlay do Menu Mobile */}
         {isMobileMenuOpen && (
           <div className="lg:hidden absolute top-24 left-4 right-4 z-[55] glass-deep p-8 rounded-[2.5rem] shadow-2xl animate-in slide-in-from-top-4 fade-in duration-300">
             <div className="flex flex-col space-y-6 text-center">
@@ -187,14 +174,14 @@ const Header: React.FC<HeaderProps> = ({ onSignUp, onLogin }) => {
               ))}
               <hr className="border-white/10" />
               <button 
-                onClick={() => handleMobileAction(onLogin)}
-                className="text-sm font-black text-slate-400 uppercase tracking-widest py-2"
+                onClick={() => handleActionClick(onLogin, 'login-mob')}
+                className={`text-sm font-black text-slate-400 uppercase tracking-widest py-2 transition-transform ${activeBtn === 'login-mob' ? 'animate-click' : ''}`}
               >
                 Acesso Gestor
               </button>
               <button 
-                onClick={() => handleMobileAction(onSignUp)}
-                className="btn-animate text-white py-4 rounded-2xl font-black uppercase tracking-widest text-xs shadow-lg shadow-blue-900/40"
+                onClick={() => handleActionClick(onSignUp, 'signup-mob')}
+                className={`btn-animate text-white py-4 rounded-2xl font-black uppercase tracking-widest text-xs shadow-lg shadow-blue-900/40 shimmer-effect ${activeBtn === 'signup-mob' ? 'animate-click' : ''}`}
               >
                 Lista de Espera
               </button>

@@ -14,11 +14,11 @@ const data = [
 
 const DashboardPreview: React.FC = () => {
   return (
-    <div className="max-w-7xl mx-auto px-6 group">
+    <div className="max-w-7xl mx-auto px-6 group reveal">
       <div className="glass rounded-[3rem] p-4 lg:p-10 overflow-hidden shadow-2xl border border-white/5 relative">
         <div className="flex flex-col lg:flex-row gap-10 relative z-10">
           {/* Sidebar Mock */}
-          <div className="hidden lg:flex flex-col w-72 space-y-8 bg-slate-900/50 p-8 rounded-[2rem] border border-white/5">
+          <div className="reveal-left delay-300 hidden lg:flex flex-col w-72 space-y-8 bg-slate-900/50 p-8 rounded-[2rem] border border-white/5">
              <div className="flex items-center gap-3 px-2">
                 <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center font-zen text-[10px]">SHC</div>
                 <div className="font-zen text-sm text-white tracking-tighter uppercase">BOX</div>
@@ -46,27 +46,19 @@ const DashboardPreview: React.FC = () => {
           {/* Main Content Mock */}
           <div className="flex-1 space-y-10">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="glass-card p-8 rounded-[2rem] border-b-4 border-b-blue-600/50">
-                <p className="text-[10px] text-slate-500 uppercase tracking-[0.2em] font-black mb-2">Entregas Ativas</p>
-                <p className="text-4xl font-bold text-white">1.248</p>
-                <div className="mt-3 text-[10px] text-blue-400 font-bold flex items-center gap-1 uppercase">
-                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clipRule="evenodd"/></svg>
-                    Eficiência em Alta
+              {[
+                { label: 'Entregas Ativas', val: '1.248', color: 'border-b-blue-600/50', delay: 'delay-100' },
+                { label: 'Frota Online', val: '92%', color: 'border-b-sky-600/50', delay: 'delay-200' },
+                { label: 'SLA de Entrega', val: '99.8%', color: 'border-b-blue-900/50', delay: 'delay-300' }
+              ].map((card, idx) => (
+                <div key={idx} className={`reveal ${card.delay} glass-card p-8 rounded-[2rem] border-b-4 ${card.color}`}>
+                  <p className="text-[10px] text-slate-500 uppercase tracking-[0.2em] font-black mb-2">{card.label}</p>
+                  <p className="text-4xl font-bold text-white">{card.val}</p>
                 </div>
-              </div>
-              <div className="glass-card p-8 rounded-[2rem] border-b-4 border-b-sky-600/50">
-                <p className="text-[10px] text-slate-500 uppercase tracking-[0.2em] font-black mb-2">Frota Online</p>
-                <p className="text-4xl font-bold text-white">92%</p>
-                <div className="mt-3 text-[10px] text-sky-400 font-bold uppercase tracking-widest">34 Veículos em Rota</div>
-              </div>
-              <div className="glass-card p-8 rounded-[2rem] border-b-4 border-b-blue-900/50">
-                <p className="text-[10px] text-slate-500 uppercase tracking-[0.2em] font-black mb-2">SLA de Entrega</p>
-                <p className="text-4xl font-bold text-white">99.8%</p>
-                <div className="mt-3 text-[10px] text-slate-500 uppercase tracking-widest">Tempo Médio: 18min</div>
-              </div>
+              ))}
             </div>
 
-            <div className="glass-card p-8 rounded-[2.5rem] h-80 relative overflow-hidden">
+            <div className="reveal delay-500 glass-card p-8 rounded-[2.5rem] h-80 relative overflow-hidden">
               <div className="flex justify-between items-start mb-10">
                 <div>
                     <p className="text-sm font-bold text-white mb-1">Fluxo de Entregas Semanais</p>
