@@ -1,123 +1,131 @@
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { GoogleGenAI } from "@google/genai";
 
 const Assistant: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [inputValue, setInputValue] = useState('');
-  const [messages, setMessages] = useState<{ role: 'user' | 'assistant', text: string }[]>([
-    { role: 'assistant', text: 'Olá! Como a tecnologia da SHC pode otimizar sua frota hoje?' }
+  const [messages, setMessages] = useState<{ role: 'user' | 'assistant', content: string }[]>([
+    { role: 'assistant', content: 'Olá! Sou o consultor virtual da SHC. Como posso ajudar na sua operação hoje?' }
   ]);
+  const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Implement handleSend using Gemini API to provide real logistics expertise
-  const handleSend = async () => {
-    if (!inputValue.trim() || isLoading) return;
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [messages]);
 
-    const userMessage = inputValue.trim();
-    setInputValue('');
-    setMessages(prev => [...prev, { role: 'user', text: userMessage }]);
+  const handleSendMessage = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!input.trim() || isLoading) return;
+
+    const userMessage = input.trim();
+    setInput('');
+    setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
     setIsLoading(true);
 
     try {
       const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-      // Using gemini-3-flash-preview for quick and helpful logistics support
       const response = await ai.models.generateContent({
         model: 'gemini-3-flash-preview',
-        contents: [
-          // Build context from conversation history
-          ...messages.map(m => ({
-            role: m.role === 'assistant' ? 'model' : 'user',
-            parts: [{ text: m.text }]
-          })),
-          { role: 'user', parts: [{ text: userMessage }] }
-        ],
+        contents: userMessage,
         config: {
-          systemInstruction: 'Você é o Expert SHC, um assistente virtual especializado em logística e no software ERP SHC BOX. Seja profissional, prestativo e foque em como o SHC BOX ajuda transportadoras a gerir frotas, finanças e rotas. Responda em Português do Brasil de forma concisa e amigável.',
-        }
+          systemInstruction: `Você é o Assistente Virtual da SHC (Soluções de Hardware e Controle). 
+          O produto principal é o SHC BOX, um ERP para pequenas transportadoras e empresas de logística.
+          Fale de forma profissional, ágil e focada em resultados (lucro, rotas, controle).
+          Responda sempre em Português do Brasil. Se perguntarem sobre preços, mencione que existem planos Starter, Professional e Enterprise e recomende falar com um consultor via WhatsApp.`,
+        },
       });
 
-      // Extract text directly from the response object as per SDK guidelines (property, not method)
-      const assistantText = response.text || 'Desculpe, não consegui processar sua solicitação no momento.';
-      setMessages(prev => [...prev, { role: 'assistant', text: assistantText }]);
+      const assistantContent = response.text || "Desculpe, tive um problema ao processar sua resposta. Tente novamente.";
+      setMessages(prev => [...prev, { role: 'assistant', content: assistantContent }]);
     } catch (error) {
-      console.error('Error calling Gemini:', error);
-      setMessages(prev => [...prev, { role: 'assistant', text: 'Desculpe, ocorreu um erro de conexão. Tente novamente em breve.' }]);
+      console.error('Erro no Assistant:', error);
+      setMessages(prev => [...prev, { role: 'assistant', content: "Ops! O sinal da minha central caiu. Pode tentar de novo em um instante?" }]);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      handleSend();
-    }
-  };
-
   return (
-    <div className="fixed bottom-10 right-10 z-[60]">
+    <div className="fixed bottom-6 right-6 z-[100]">
+      {/* Botão Flutuante */}
+      <button 
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-16 h-16 rounded-full bg-blue-600 text-white shadow-2xl flex items-center justify-center hover:bg-blue-500 transition-all active:scale-90 border-t border-white/20 group"
+      >
+        {isOpen ? (
+          <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        ) : (
+          <div className="relative">
+            <svg className="w-8 h-8 group-hover:rotate-12 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
+            <span className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-[#020617] animate-pulse"></span>
+          </div>
+        )}
+      </button>
+
+      {/* Janela do Chat */}
       {isOpen && (
-        <div className="absolute bottom-24 right-0 w-80 glass rounded-[2.5rem] p-8 shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-blue-500/20 animate-in fade-in slide-in-from-bottom-6 duration-500 flex flex-col max-h-[500px]">
-          <div className="flex items-center gap-4 mb-6">
-            <div className="relative">
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-600 to-blue-400 flex items-center justify-center font-zen text-sm shadow-xl shadow-blue-500/20 text-white">S</div>
-                <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 border-4 border-[#0a0f1d] rounded-full"></div>
-            </div>
+        <div className="absolute bottom-20 right-0 w-[350px] md:w-[400px] h-[550px] glass-deep rounded-[2.5rem] border border-blue-500/30 shadow-[0_40px_100px_rgba(0,0,0,0.8)] flex flex-col overflow-hidden animate-modal">
+          {/* Header do Chat */}
+          <div className="bg-blue-600/20 p-6 border-b border-white/5 flex items-center gap-4">
+            <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center font-zen text-[10px] text-blue-600 shadow-lg">SHC</div>
             <div>
-              <p className="text-sm font-bold text-white uppercase tracking-wider">Expert SHC</p>
-              <p className="text-[10px] text-blue-400 font-bold uppercase tracking-widest">Logistics SaaS</p>
+              <p className="text-white font-bold text-sm">Consultor Virtual</p>
+              <div className="flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+                <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Especialista Online</span>
+              </div>
             </div>
           </div>
-          
-          <div className="space-y-4 mb-6 overflow-y-auto pr-2 custom-scrollbar flex-1">
-            {messages.map((msg, idx) => (
-              <div key={idx} className={`${msg.role === 'user' ? 'bg-blue-600/20 border-blue-500/10 ml-4' : 'bg-white/5 border-white/5 mr-4'} rounded-2xl p-4 text-xs text-slate-300 leading-relaxed border`}>
-                {msg.text}
+
+          {/* Mensagens */}
+          <div ref={scrollRef} className="flex-1 overflow-y-auto p-6 space-y-4 scroll-smooth">
+            {messages.map((msg, i) => (
+              <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                <div className={`max-w-[85%] p-4 rounded-2xl text-sm leading-relaxed ${
+                  msg.role === 'user' 
+                    ? 'bg-blue-600 text-white rounded-tr-none' 
+                    : 'bg-slate-800 text-slate-200 rounded-tl-none border border-white/5'
+                }`}>
+                  {msg.content}
+                </div>
               </div>
             ))}
             {isLoading && (
-              <div className="bg-white/5 rounded-2xl p-4 text-xs text-slate-300 leading-relaxed border border-white/5 animate-pulse">
-                Processando...
+              <div className="flex justify-start">
+                <div className="bg-slate-800 p-4 rounded-2xl rounded-tl-none border border-white/5 flex gap-1">
+                  <span className="w-1.5 h-1.5 bg-slate-500 rounded-full animate-bounce"></span>
+                  <span className="w-1.5 h-1.5 bg-slate-500 rounded-full animate-bounce [animation-delay:0.2s]"></span>
+                  <span className="w-1.5 h-1.5 bg-slate-500 rounded-full animate-bounce [animation-delay:0.4s]"></span>
+                </div>
               </div>
             )}
           </div>
 
-          <div className="relative">
-            <input 
-              type="text" 
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              onKeyPress={handleKeyPress}
-              placeholder="Digite sua dúvida..." 
-              className="w-full bg-black/40 border border-white/5 rounded-2xl px-5 py-3 text-xs text-white focus:outline-none focus:border-blue-500/50 transition-all placeholder:text-slate-600"
-              disabled={isLoading}
-            />
-            <button 
-              onClick={handleSend}
-              disabled={isLoading}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-blue-400 hover:text-white transition-colors disabled:opacity-50"
-            >
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"/></svg>
-            </button>
-          </div>
+          {/* Input */}
+          <form onSubmit={handleSendMessage} className="p-6 bg-slate-900/50 border-t border-white/5">
+            <div className="flex gap-2">
+              <input 
+                type="text" 
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder="Como diminuir meus custos?" 
+                className="flex-1 bg-slate-800/80 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500 transition-all placeholder:text-slate-600"
+              />
+              <button 
+                type="submit"
+                disabled={isLoading}
+                className="bg-blue-600 p-3 rounded-xl hover:bg-blue-500 transition-colors disabled:opacity-50"
+              >
+                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+              </button>
+            </div>
+          </form>
         </div>
       )}
-      <button 
-        onClick={() => setIsOpen(!isOpen)}
-        className={`w-16 h-16 rounded-[1.5rem] flex items-center justify-center transition-all shadow-2xl shadow-blue-600/30 active:scale-90 border-2 ${isOpen ? 'bg-slate-900 border-blue-500/50 scale-110' : 'bg-blue-600 border-white/20 hover:bg-blue-500'}`}
-      >
-        {isOpen ? (
-          <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"/></svg>
-        ) : (
-          <div className="relative">
-              <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
-              <span className="absolute -top-1 -right-1 flex h-3 w-3">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-3 w-3 bg-white"></span>
-              </span>
-          </div>
-        )}
-      </button>
     </div>
   );
 };

@@ -7,7 +7,6 @@ import LogisticsVisual from './components/LogisticsVisual';
 import DashboardPreview from './components/DashboardPreview';
 import ContactSection from './components/ContactSection';
 import Footer from './components/Footer';
-import Assistant from './components/Assistant';
 import ContactModal from './components/ContactModal';
 
 const App: React.FC = () => {
@@ -68,7 +67,6 @@ const App: React.FC = () => {
       </main>
 
       <Footer />
-      <Assistant />
       <ContactModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} type={modalType} />
     </div>
   );
