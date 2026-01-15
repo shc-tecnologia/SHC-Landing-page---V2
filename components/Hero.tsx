@@ -42,13 +42,12 @@ const Hero: React.FC<HeroProps> = ({ onSignUp }) => {
           <h1 className="reveal delay-100 font-modern text-6xl md:text-8xl font-black text-white mb-8 leading-tight tracking-tighter">
             SUAS ENTREGAS <br/> 
             <span className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300 pr-6 py-2 -mr-6">
-              DENTRO DA <span className="italic">BOX.</span>
+              DENTRO DA <span className="italic">SHC BOX.</span>
             </span>
           </h1>
           
           <p className="reveal delay-200 max-w-xl mx-auto lg:mx-0 text-slate-400 text-lg md:text-xl font-light leading-relaxed mb-12">
-            O <strong className="text-white font-bold">SHC BOX</strong> é o sistema definitivo para centralizar a gestão da sua transportadora.
-Controle rotas, entregas, lucro e os principais apps que você já usa de marketplace — como <strong className="text-white font-bold">Mercado Livre, Shopee, Amazon e afins</strong> — tudo em um só lugar.
+            <strong className="text-white font-semibold"> O SHC BOX é o centro de controle da sua operação de entregas. Centralize rotas, entregas, custos e lucro, além dos principais apps de marketplace, como Shoppe e Mercado Livre, tudo em um só lugar — feito para agregados e operações de última milha em crescimento.</strong> 
           </p>
           
           <div className="reveal delay-300 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-6">

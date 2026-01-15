@@ -17,7 +17,7 @@ const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose, type }) =>
     e.preventDefault();
     setIsLoading(true);
 
-    // Simulação de processamento
+
     setTimeout(() => {
       setIsLoading(false);
       setSuccess(true);

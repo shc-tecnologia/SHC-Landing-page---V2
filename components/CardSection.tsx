@@ -1,1 +1,0 @@
-// This component is no longer used in the SHC ERP landing page.
